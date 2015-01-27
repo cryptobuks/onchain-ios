@@ -20,6 +20,11 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
+- (void)showWaitingScreen:(NSString *)strText bShowText:(BOOL)bShowText withSize : (CGSize) size;
+- (void)hideWaitingScreen;
+
+ 
++(AppDelegate *) sharedAppDelegate;
 
 @end
 

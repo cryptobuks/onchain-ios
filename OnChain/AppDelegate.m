@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <Chain/Chain.h>
+
+#import "Define_Gloabal.h"
 
 @interface AppDelegate ()
 
@@ -17,7 +20,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [Chain sharedInstanceWithToken:@"3f7d1b8d82629f45bc05c0fd7cff85a1"];
+    
     return YES;
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -42,6 +48,86 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+}
++(AppDelegate *) sharedAppDelegate
+{
+    
+    AppDelegate * delegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
+    return delegate;
+}
+
+
+#pragma mark - Indicator View
+
+
+- (void)showWaitingScreen:(NSString *)strText bShowText:(BOOL)bShowText withSize : (CGSize) size
+{
+    
+    
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    
+    [view setTag:TAG_WAIT_SCREEN_VIEW];
+    [view setBackgroundColor:[UIColor clearColor]];
+    [view setAlpha:1.0f];
+    
+    if (bShowText) {
+        UIView *subView = [[UIView alloc] init];
+        [subView setBackgroundColor:[UIColor blackColor]];
+        [subView setAlpha:0.7];
+        
+        int width = size.width;
+        int height = size.height;
+        
+        [subView setFrame:CGRectMake(view.frame.size.width/2-width/2, view.frame.size.height/2-height/2, width, height)];
+        
+        UIActivityIndicatorView *indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        [indicatorView setTag:TAG_WAIT_SCREEN_INDICATOR];
+        CGRect rectIndicatorViewFrame = [indicatorView frame];
+        
+        width = rectIndicatorViewFrame.size.width;
+        height = rectIndicatorViewFrame.size.height;
+        
+        [indicatorView setFrame:CGRectMake(subView.frame.size.width/2-width/2, subView.frame.size.height/3-width/2, width, height)];
+        
+        [indicatorView startAnimating];
+        [subView addSubview:indicatorView];
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, subView.frame.size.height * 1.6/3, subView.frame.size.width, subView.frame.size.height/3)];
+        [label setText:strText];
+        
+        [label setBackgroundColor:[UIColor clearColor]];
+        [label setTextAlignment:NSTextAlignmentCenter];
+        
+        [label setTextColor:[UIColor whiteColor]];
+        [label setTag:TAG_WAIT_SCREEN_LABEL];
+        
+        [label setFont:[UIFont systemFontOfSize:14 * MULTIPLY_VALUE]];
+        
+        [subView addSubview:label];
+        subView.layer.cornerRadius = 10.0f;//  = [Common roundCornersOnView:subView onTopLeft:YES topRight:YES bottomLeft:YES bottomRight:YES radius:10.0f];
+        
+        [view addSubview:subView];
+    }
+    
+    [_window addSubview:view];
+}
+
+- (void)hideWaitingScreen {
+    UIView *view = [_window viewWithTag:TAG_WAIT_SCREEN_VIEW];
+    
+    if (view) {
+        UIActivityIndicatorView *indicatorView = (UIActivityIndicatorView*)[view viewWithTag:TAG_WAIT_SCREEN_INDICATOR];
+        
+        if (indicatorView)
+            [indicatorView stopAnimating];
+        
+        [view removeFromSuperview];
+        
+        UILabel *label = (UILabel *)[view viewWithTag:TAG_WAIT_SCREEN_LABEL];
+        if (label) {
+            [label removeFromSuperview];
+        }
+    }
 }
 
 #pragma mark - Core Data stack
