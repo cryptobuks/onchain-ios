@@ -172,11 +172,11 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
-//    return walletSeed;
+//    return walletSeed; 
     BTCKeychain * keyChain = [self getMnemonic].keychain;
     
     return keyChain;
-} 
+}
 - (void) excuteBit:(NSString *) data withKey:(BTCKey *) dataKey
 {
     if (![BitID checkBitIDValidatyWithQR:[NSURL URLWithString:data]]) {
