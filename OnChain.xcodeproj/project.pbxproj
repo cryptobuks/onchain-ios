@@ -31,6 +31,7 @@
 		7EAC93051A76ACE900058BA3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7EAC93031A76ACE900058BA3 /* LaunchScreen.xib */; };
 		7EAC93111A76ACE900058BA3 /* OnChainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAC93101A76ACE900058BA3 /* OnChainTests.m */; };
 		7EBFD8241A77C7FB00CF3A36 /* BitID.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EBFD8231A77C7FB00CF3A36 /* BitID.m */; };
+		7EF7C6141A7AB78F00B1EED3 /* BitIDCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF7C6131A7AB78F00B1EED3 /* BitIDCommands.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +93,8 @@
 		7EAC93101A76ACE900058BA3 /* OnChainTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OnChainTests.m; sourceTree = "<group>"; };
 		7EBFD8221A77C7FB00CF3A36 /* BitID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitID.h; sourceTree = "<group>"; };
 		7EBFD8231A77C7FB00CF3A36 /* BitID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitID.m; sourceTree = "<group>"; };
+		7EF7C6121A7AB78F00B1EED3 /* BitIDCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitIDCommands.h; sourceTree = "<group>"; };
+		7EF7C6131A7AB78F00B1EED3 /* BitIDCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BitIDCommands.m; sourceTree = "<group>"; };
 		DFCDAE795393527EC56CF9E2 /* Pods-OnChain.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnChain.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OnChain/Pods-OnChain.debug.xcconfig"; sourceTree = "<group>"; };
 		F34FF5FB5007E4DA47C80402 /* Pods-OnChain.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OnChain.release.xcconfig"; path = "Pods/Target Support Files/Pods-OnChain/Pods-OnChain.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -198,6 +201,8 @@
 				7E09ADBA1A778B4100F3538B /* QRAnalystics.m */,
 				7EBFD8221A77C7FB00CF3A36 /* BitID.h */,
 				7EBFD8231A77C7FB00CF3A36 /* BitID.m */,
+				7EF7C6121A7AB78F00B1EED3 /* BitIDCommands.h */,
+				7EF7C6131A7AB78F00B1EED3 /* BitIDCommands.m */,
 			);
 			path = QRCodeParse;
 			sourceTree = "<group>";
@@ -414,6 +419,7 @@
 				7E09ADAF1A77755300F3538B /* SBJsonParser.m in Sources */,
 				7EBFD8241A77C7FB00CF3A36 /* BitID.m in Sources */,
 				7E09ADAD1A77755300F3538B /* SBJSON.m in Sources */,
+				7EF7C6141A7AB78F00B1EED3 /* BitIDCommands.m in Sources */,
 				7E09ADBB1A778B4100F3538B /* QRAnalystics.m in Sources */,
 				7E09ADB41A77768E00F3538B /* NetworkingClass.m in Sources */,
 				7EAC92F41A76ACE900058BA3 /* main.m in Sources */,

@@ -11,7 +11,7 @@
 @protocol NetworkingClassDelegate <NSObject>
 
 @optional
-- (void) successLoginToServer:(NSString *) strToken;
+- (void) successAuthentification;
 
 - (void) failedConnectToServer:(NSString *) strErrorMessage;
 
@@ -20,6 +20,8 @@
 
 @interface NetworkingClass : NSObject
 @property (nonatomic, weak) id <NetworkingClassDelegate> delegate;
+
+- (void) doBitIDWithSigned:(NSString *) strSigned withPostBack:(NSString *) postBack withAddress:(NSString *)address withData:(NSString *) data;
 
 - (void) authontificateWithKey:(NSString *) strKey;
 

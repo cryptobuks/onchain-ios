@@ -1,0 +1,5 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, 8.1
+target :OnChain do
+  pod "Chain", :path => "../chain-ios-master/"
+end

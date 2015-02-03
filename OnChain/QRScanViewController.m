@@ -8,6 +8,7 @@
 
 #import "QRScanViewController.h"
 #import "Define_Gloabal.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 #import <Chain/Chain.h>
 #import <CoreBitcoin/CoreBitcoin.h>
@@ -15,13 +16,21 @@
 
 #import "NetworkingClass.h"
 #import "QRCodeParse.h"
-@interface QRScanViewController ()
+
+#import "BitIDCommands.h"
+#import "BitID.h"
+
+@interface QRScanViewController ()<NetworkingClassDelegate>
 {
-    UILabel * lbl_1;
+    UILabel * lblBalance;
     UILabel * lbl_2;
     UIView * viewQRScan;
     
     NetworkingClass * reqServer;
+    CC_SHA256_CTX shaCTX;
+    
+    BTCKey * _dataKey;
+    NSString * _data;
 }
 @end
 
@@ -47,13 +56,13 @@
     view2.backgroundColor = [UIColor colorWithRed:50.0 / 255.0 green:140.0 / 255.0 blue:240.0 / 255.0 alpha:1.0];
     [self.view addSubview:view2];
     
-    lbl_1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40 * MULTIPLY_VALUE)];
-    lbl_1.center = CGPointMake(SCREEN_WIDTH / 2, view1.frame.size.height / 2);
-    lbl_1.textColor = [UIColor whiteColor];
-    lbl_1.textAlignment = NSTextAlignmentCenter;
-    lbl_1.font = [UIFont systemFontOfSize:25 * MULTIPLY_VALUE];
-    lbl_1.text = @"0.00 BTC";
-    [view1 addSubview:lbl_1];
+    lblBalance = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40 * MULTIPLY_VALUE)];
+    lblBalance.center = CGPointMake(SCREEN_WIDTH / 2, view1.frame.size.height / 2);
+    lblBalance.textColor = [UIColor whiteColor];
+    lblBalance.textAlignment = NSTextAlignmentCenter;
+    lblBalance.font = [UIFont systemFontOfSize:25 * MULTIPLY_VALUE];
+    lblBalance.text = @"0.00 BTC";
+    [view1 addSubview:lblBalance];
     
     lbl_2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 40 * MULTIPLY_VALUE)];
     lbl_2.center = CGPointMake(SCREEN_WIDTH / 2, view1.frame.size.height / 2);
@@ -63,6 +72,7 @@
     lbl_2.text = @"https://onchain.io";
     [view2 addSubview:lbl_2];
     
+    [self getWalletSeed];
     
     reqServer = [[NetworkingClass alloc] init];
 
@@ -92,37 +102,108 @@
         [tmpStr lowercaseString];
         
         if ([tmpStr isEqualToString:@"bitid"]) {
-            
+//            BitIDCommands * idCommand = [[BitIDCommands alloc] init];
+            [self excuteBit:message withKey:[self getHDWalletDeterministicKeyWithIndex:0]];
         }
         else
         {
             
         }
-        
-        
+//        BTCKey * data = [self getHDWalletDeterministicKeyWithIndex:0];
+
         [viewQRScan removeFromSuperview];
     }];
     [self.view addSubview:viewQRScan];
 
 }
-
-- (NSString *) getWalletSeed
+- (BTCKey *) getHDWalletDeterministicKeyWithIndex:(NSInteger) index
+{
+    BTCKey * data = [[self getHDWalletDeterministicKey] keyAtIndex:(uint32_t)index];
+    return data;
+}
+- (BTCKeychain *) getHDWalletDeterministicKey
+{
+//    NSArray * seed = [[self getWalletSeed] componentsSeparatedByString:@" "];
+//    BTCMnemonic * mc = [[BTCMnemonic alloc] initWithWords:seed password:@"" wordListType:BTCMnemonicWordListTypeUnknown];
+//    return mc.entropy;
+    return [self getWalletSeed];
+}
+- (BTCMnemonic *) getMnemonic
+{
+    CC_SHA256_Init(&shaCTX);
+    NSData * data = BTCRandomDataWithLength(32);
+    CC_SHA256_Update(&shaCTX, data.bytes, (CC_LONG)data.length);
+    
+    unsigned char digest[CC_SHA384_DIGEST_LENGTH];
+    CC_SHA256_Final(digest, &shaCTX);
+    
+    NSMutableData * seed = [NSMutableData dataWithBytes:&digest length:CC_SHA256_DIGEST_LENGTH];
+    
+    BTCSecureMemset(digest, 0, CC_SHA256_DIGEST_LENGTH);
+    BTCSecureMemset(&shaCTX, 0, sizeof(shaCTX));
+    
+    BTCMnemonic * mnemonic = [[BTCMnemonic alloc] initWithEntropy:BTCDataRange(seed, NSMakeRange(0, 16)) password:nil wordListType:BTCMnemonicWordListTypeEnglish];
+    
+    
+//    BTCKeychain * keyChain = mnemonic.keychain.bitcoinMainnetKeychain;
+    
+    return mnemonic;
+}
+- (BTCKeychain *) getWalletSeed
 {
     NSString * walletSeed = [[NSUserDefaults standardUserDefaults] objectForKey:@"wallet-seed"];
     if (!walletSeed || !walletSeed.length) {
         NSMutableData * data = [NSMutableData dataWithLength:32];
-        int error = SecRandomCopyBytes(kSecRandomDefault, 32, [data mutableBytes]);
+        
+        uint8_t aa[32];
+        
+        int error = SecRandomCopyBytes(kSecRandomDefault, 32, aa);
         if (error != noErr) {
-//            @throw [NSException exceptionWithName:<#(NSString *)#> reason:<#(NSString *)#> userInfo:nil]
             
         }
-        walletSeed = [NSString stringWithUTF8String:[data mutableBytes]];
+        data = [NSMutableData dataWithBytes:aa length:32];
+        
+        walletSeed = [NSString stringWithUTF8String:data.mutableBytes];
+        NSLog(@"%@", walletSeed);
+
+        
         
         [[NSUserDefaults standardUserDefaults] setObject:walletSeed forKey:@"wallet-seed"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
-    return walletSeed;
+//    return walletSeed;
+    BTCKeychain * keyChain = [self getMnemonic].keychain;
+    
+    return keyChain;
 }
-
+- (void) excuteBit:(NSString *) data withKey:(BTCKey *) dataKey
+{
+    if (![BitID checkBitIDValidatyWithQR:[NSURL URLWithString:data]]) {
+        return;
+    }
+    _data = data;
+    _dataKey = dataKey;
+    
+    NSURL * callback = [BitID buildCallbackUrlFromBitUrl:[NSURL URLWithString:data]];
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:[NSString stringWithFormat:@"%@ is requesting that you identify yourself.\nDo you want to proceed?", callback] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    [alert show];
+    
+     
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex) {
+        NSURL * callback = [BitID buildCallbackUrlFromBitUrl:[NSURL URLWithString:_data]];
+        NSData * dataMessage = [_dataKey signatureForMessage:@"message"];
+        
+        NSString * strSigned = [[NSString alloc] initWithData:dataMessage encoding:NSASCIIStringEncoding];
+        NSString * address = _dataKey.privateKeyAddress.string;
+        
+        NetworkingClass * serverReq = [[NetworkingClass alloc] init];
+        serverReq.delegate = self;
+        [serverReq doBitIDWithSigned:strSigned withPostBack:[callback absoluteString]  withAddress:address withData:_data];
+    }
+}
 @end

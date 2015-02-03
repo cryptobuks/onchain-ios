@@ -38,7 +38,7 @@
     NSURL * result = [[NSURL alloc] initWithScheme:strScheme host:urlQR.host path:urlQR.path];
 //    result.port = urlQR.port;
     
-    
+     
     return result;
 }
 + (NSDictionary *) getParametersFromURL:(NSURL *) urlQR
@@ -54,7 +54,7 @@
             {
                 NSArray * tmpArr = [str componentsSeparatedByString:@"="];
                 if (tmpArr.count > 1) {
-                    dic[tmpArr[0]] = dic[tmpArr[1]];
+                    dic[tmpArr[0]] = tmpArr[1];
                 }
                 
             }
@@ -77,7 +77,7 @@
             {
                 NSArray * tmpArr = [str componentsSeparatedByString:@"="];
                 if (tmpArr.count > 1) {
-                    dic[tmpArr[0]] = dic[tmpArr[1]];
+                    dic[tmpArr[0]] = tmpArr[1];
                     if ([tmpArr[0] isEqualToString:@"x"]) {
                         return tmpArr[1];
                     }
