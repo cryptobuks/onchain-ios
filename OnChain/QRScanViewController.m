@@ -170,7 +170,7 @@
         
         [[NSUserDefaults standardUserDefaults] setObject:walletSeed forKey:@"wallet-seed"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-    }
+    } 
     
 //    return walletSeed;
     BTCKeychain * keyChain = [self getMnemonic].keychain;
