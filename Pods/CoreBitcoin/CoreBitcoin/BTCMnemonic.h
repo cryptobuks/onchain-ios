@@ -1,6 +1,7 @@
 // CoreBitcoin by Oleg Andreev <oleganza@gmail.com>, WTFPL.
 
 #import <Foundation/Foundation.h>
+#import "BTC256.h"
 
 typedef NS_ENUM(int8_t, BTCMnemonicWordListType) {
     // English wordlist specified by BIP39.

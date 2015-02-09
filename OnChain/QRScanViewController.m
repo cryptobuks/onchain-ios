@@ -19,18 +19,23 @@
 
 #import "BitIDCommands.h"
 #import "BitID.h"
+#import "MultiUtils.h"
+#import "ChainCommands.h"
 
-@interface QRScanViewController ()<NetworkingClassDelegate>
+@interface QRScanViewController ()<NetworkingClassDelegate, ChainCommandsDelegate>
 {
     UILabel * lblBalance;
     UILabel * lbl_2;
     UIView * viewQRScan;
     
-    NetworkingClass * reqServer;
+    NetworkingClass * serverReq;
+    ChainCommands * commandChain;
     CC_SHA256_CTX shaCTX;
     
     BTCKey * _dataKey;
     NSString * _data;
+    
+    NSString * qrMessage;
 }
 @end
 
@@ -72,9 +77,14 @@
     lbl_2.text = @"https://onchain.io";
     [view2 addSubview:lbl_2];
     
-    [self getWalletSeed];
+//    [self getWalletSeed];
     
-    reqServer = [[NetworkingClass alloc] init];
+    serverReq = [[NetworkingClass alloc] init];
+    serverReq.delegate = self;
+
+    commandChain = [[ChainCommands alloc] init];
+    commandChain.delegate = self;
+    
 
 }
 
@@ -94,26 +104,74 @@
 */
 - (void) onScan
 {
+//            [self excuteBit:@"bitid://carbonwallet.com/callback?x=9dad35460705fc68" withKey:[self getHDWalletDeterministicKeyWithIndex:0]];
+//    return;
+    
+    
+    
     viewQRScan =  [BTCQRCode scannerViewWithBlock:^(NSString *message)
     {
         NSLog(@"QR ====> %@", message);
         
-        NSString * tmpStr = [message substringWithRange:NSMakeRange(0, 5)];
-        [tmpStr lowercaseString];
-        
-        if ([tmpStr isEqualToString:@"bitid"]) {
-//            BitIDCommands * idCommand = [[BitIDCommands alloc] init];
-            [self excuteBit:message withKey:[self getHDWalletDeterministicKeyWithIndex:0]];
-        }
-        else
-        {
-            
-        }
+        [self processQR:message];
 //        BTCKey * data = [self getHDWalletDeterministicKeyWithIndex:0];
 
         [viewQRScan removeFromSuperview];
     }];
     [self.view addSubview:viewQRScan];
+
+}
+- (void) processQR:(NSString *) data
+{
+    if ([data rangeOfString:@"bitid"].length == 5 && ![data rangeOfString:@"bitid"].location) {
+        [self excuteBit:data withKey:[self getHDWalletDeterministicKeyWithIndex:0]];
+    }
+    else
+    {
+        NSArray * array = [data componentsSeparatedByString:@"\\|"];
+        if (array.count < 3) {
+            // BIP 39 seed
+            array = [data componentsSeparatedByString:@" "];
+            if (array.count == 24) {
+                [self processNewWalletSeed:data];
+            } else if ([data rangeOfString:@"5"].length == 1 && ![data rangeOfString:@"5"].location)
+            {
+                [self seedWalletWithWalletImportFormatPrivateKey:data];
+                
+            }
+            return;
+        }
+        NSString * cmd = array[0];
+        NSString * service = array[1];
+        NSString * postBack = array[2];
+        
+        NSInteger crc = [MultiUtils crc16:service];
+        
+        if ([cmd isEqualToString:@"mpk"]) {
+            [commandChain processMPKRequestWithParams:array withPostBack:postBack withKey:[self getHDWalletDeterministicKeyWithIndex:crc]];
+        } else if ([cmd isEqualToString:@"sign"]){
+            [commandChain processSignRequestWithParams:array withPostBack:postBack withKey:[self getHDWalletDeterministicKeyWithIndex:crc]];
+        } else if ([cmd isEqualToString:@"pubkey"]){
+            [commandChain processPubKeyRequestWithParams:array withPostBack:postBack withKey:[self getHDWalletDeterministicKeyWithIndex:crc]];
+        }
+        
+    }
+
+}
+- (void) processNewWalletSeed:(NSString *) data
+{
+    qrMessage = data;
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Do you want to change your BIP39 seed?" message:data delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    alert.tag = 1;
+    [alert show];
+ 
+}
+- (void) seedWalletWithWalletImportFormatPrivateKey:(NSString *) data
+{
+    qrMessage = data;
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Do you want to change generate a new wallet from this private key?" message:data delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    alert.tag = 2;
+    [alert show];
 
 }
 - (BTCKey *) getHDWalletDeterministicKeyWithIndex:(NSInteger) index
@@ -123,10 +181,17 @@
 }
 - (BTCKeychain *) getHDWalletDeterministicKey
 {
-//    NSArray * seed = [[self getWalletSeed] componentsSeparatedByString:@" "];
-//    BTCMnemonic * mc = [[BTCMnemonic alloc] initWithWords:seed password:@"" wordListType:BTCMnemonicWordListTypeUnknown];
-//    return mc.entropy;
-    return [self getWalletSeed];
+    NSMutableArray * seed = [NSMutableArray arrayWithArray:[[self getWalletSeed] componentsSeparatedByString:@" "]];
+    for (NSString * theStr in seed) {
+        if (!theStr.length) {
+            [seed removeObject:theStr];
+        }
+    }
+    BTCMnemonic * mc = [[BTCMnemonic alloc] initWithWords:seed password:@"" wordListType:BTCMnemonicWordListTypeEnglish];
+    BTCKeychain * keyChain = [[BTCKeychain alloc] initWithSeed:mc.entropy];
+    
+    return keyChain;
+//    return [self getWalletSeed];
 }
 - (BTCMnemonic *) getMnemonic
 {
@@ -149,33 +214,47 @@
     
     return mnemonic;
 }
-- (BTCKeychain *) getWalletSeed
+- (void) setWalletSeedWithSeed:(NSString *) seed
+{
+    [[NSUserDefaults standardUserDefaults] setObject:seed forKey:@"wallet-seed"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+}
+- (NSString *) getWalletSeed
 {
     NSString * walletSeed = [[NSUserDefaults standardUserDefaults] objectForKey:@"wallet-seed"];
     if (!walletSeed || !walletSeed.length) {
         NSMutableData * data = [NSMutableData dataWithLength:32];
         
-        uint8_t aa[32];
+        uint8_t rndData[32];
         
-        int error = SecRandomCopyBytes(kSecRandomDefault, 32, aa);
+        int error = SecRandomCopyBytes(kSecRandomDefault, 32, rndData);
         if (error != noErr) {
             
         }
-        data = [NSMutableData dataWithBytes:aa length:32];
+        data = [NSMutableData dataWithBytes:rndData length:32];
+//        BTCMnemonic * mne = [[BTCMnemonic alloc] initWithData:data];
+        BTCMnemonic * mne = [self getMnemonic];
+        NSArray * tmpArr = [mne words];
+        NSMutableString * seed = [[NSMutableString alloc] init];
+        for (NSString * theStr in tmpArr) {
+            [seed appendFormat:@"%@ ", theStr];
+            
+        }
         
-        walletSeed = [NSString stringWithUTF8String:data.mutableBytes];
+        walletSeed = seed;
         NSLog(@"%@", walletSeed);
 
         
         
         [[NSUserDefaults standardUserDefaults] setObject:walletSeed forKey:@"wallet-seed"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-    } 
+    }
     
-//    return walletSeed;
-    BTCKeychain * keyChain = [self getMnemonic].keychain;
-    
-    return keyChain;
+    return walletSeed;
+//    BTCKeychain * keyChain = [self getMnemonic].keychain;
+//    
+//    return keyChain;
 }
 - (void) excuteBit:(NSString *) data withKey:(BTCKey *) dataKey
 {
@@ -187,23 +266,46 @@
     
     NSURL * callback = [BitID buildCallbackUrlFromBitUrl:[NSURL URLWithString:data]];
     
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"" message:[NSString stringWithFormat:@"%@ is requesting that you identify yourself.\nDo you want to proceed?", callback] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"BIP ID Sign in request." message:[NSString stringWithFormat:@"%@ is requesting that you identify yourself.\nDo you want to proceed?", callback] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+    alert.tag = 0;
     [alert show];
     
-     
+    
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex) {
-        NSURL * callback = [BitID buildCallbackUrlFromBitUrl:[NSURL URLWithString:_data]];
-        NSData * dataMessage = [_dataKey signatureForMessage:@"message"];
-        
-        NSString * strSigned = [[NSString alloc] initWithData:dataMessage encoding:NSASCIIStringEncoding];
-        NSString * address = _dataKey.privateKeyAddress.string;
-        
-        NetworkingClass * serverReq = [[NetworkingClass alloc] init];
-        serverReq.delegate = self;
-        [serverReq doBitIDWithSigned:strSigned withPostBack:[callback absoluteString]  withAddress:address withData:_data];
+    switch (alertView.tag) {
+        case 0:
+            if (buttonIndex) {
+                NSURL * callback = [BitID buildCallbackUrlFromBitUrl:[NSURL URLWithString:_data]];
+                NSData * dataMessage = [_dataKey signatureForMessage:_data];
+                
+                NSString * strSigned = [dataMessage base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+                
+                NSString * address = [_dataKey.address base58String];
+                
+                [serverReq doBitIDWithSigned:strSigned withPostBack:[callback absoluteString]  withAddress:address withData:_data];
+            } 
+            break;
+        case 1:
+            if (buttonIndex) {
+                [self setWalletSeedWithSeed:qrMessage];
+            }
+            break;
+            
+        case 2:
+            if (buttonIndex) {
+                
+            }
+            break;
+            
+        case 3:
+            
+            break;
+            
+            
+        default:
+            break;
     }
 }
 @end

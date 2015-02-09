@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		252B463E27162D964D4B22D7 /* libPods-OnChain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FC4CBC0650A5AEE6CA3F806 /* libPods-OnChain.a */; };
+		7E0159DA1A8660BE00D046B8 /* MultiUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0159D91A8660BE00D046B8 /* MultiUtils.m */; };
+		7E0159DD1A8664B300D046B8 /* ChainCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E0159DC1A8664B300D046B8 /* ChainCommands.m */; };
 		7E09AD891A76B83800F3538B /* QRScanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09AD881A76B83800F3538B /* QRScanViewController.m */; };
 		7E09AD8C1A76B8A100F3538B /* Define_Gloabal.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09AD8B1A76B8A100F3538B /* Define_Gloabal.m */; };
 		7E09ADA71A77755300F3538B /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09AD901A77755300F3538B /* AFHTTPClient.m */; };
@@ -23,6 +25,7 @@
 		7E09ADB41A77768E00F3538B /* NetworkingClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09ADB31A77768E00F3538B /* NetworkingClass.m */; };
 		7E09ADB81A777A3400F3538B /* QRCodeParse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09ADB71A777A3400F3538B /* QRCodeParse.m */; };
 		7E09ADBB1A778B4100F3538B /* QRAnalystics.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E09ADBA1A778B4100F3538B /* QRAnalystics.m */; };
+		7E30D5851A827A22006B45E9 /* MnemonicCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E30D5841A827A22006B45E9 /* MnemonicCode.m */; };
 		7EAC92F41A76ACE900058BA3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAC92F31A76ACE900058BA3 /* main.m */; };
 		7EAC92F71A76ACE900058BA3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EAC92F61A76ACE900058BA3 /* AppDelegate.m */; };
 		7EAC92FA1A76ACE900058BA3 /* OnChain.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7EAC92F81A76ACE900058BA3 /* OnChain.xcdatamodeld */; };
@@ -46,6 +49,10 @@
 
 /* Begin PBXFileReference section */
 		2FC4CBC0650A5AEE6CA3F806 /* libPods-OnChain.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OnChain.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E0159D81A8660BE00D046B8 /* MultiUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiUtils.h; sourceTree = "<group>"; };
+		7E0159D91A8660BE00D046B8 /* MultiUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiUtils.m; sourceTree = "<group>"; };
+		7E0159DB1A8664B300D046B8 /* ChainCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChainCommands.h; sourceTree = "<group>"; };
+		7E0159DC1A8664B300D046B8 /* ChainCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChainCommands.m; sourceTree = "<group>"; };
 		7E09AD871A76B83800F3538B /* QRScanViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRScanViewController.h; sourceTree = "<group>"; };
 		7E09AD881A76B83800F3538B /* QRScanViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRScanViewController.m; sourceTree = "<group>"; };
 		7E09AD8A1A76B8A100F3538B /* Define_Gloabal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define_Gloabal.h; sourceTree = "<group>"; };
@@ -59,7 +66,6 @@
 		7E09AD951A77755300F3538B /* AFJSONUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFJSONUtilities.h; sourceTree = "<group>"; };
 		7E09AD961A77755300F3538B /* AFURLConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLConnectionOperation.h; sourceTree = "<group>"; };
 		7E09AD971A77755300F3538B /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
-		7E09AD981A77755300F3538B /* Define.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Define.h; sourceTree = "<group>"; };
 		7E09AD9A1A77755300F3538B /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		7E09AD9B1A77755300F3538B /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
 		7E09AD9C1A77755300F3538B /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
@@ -79,6 +85,8 @@
 		7E09ADB71A777A3400F3538B /* QRCodeParse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRCodeParse.m; sourceTree = "<group>"; };
 		7E09ADB91A778B4100F3538B /* QRAnalystics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QRAnalystics.h; sourceTree = "<group>"; };
 		7E09ADBA1A778B4100F3538B /* QRAnalystics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QRAnalystics.m; sourceTree = "<group>"; };
+		7E30D5831A827A22006B45E9 /* MnemonicCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MnemonicCode.h; sourceTree = "<group>"; };
+		7E30D5841A827A22006B45E9 /* MnemonicCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MnemonicCode.m; sourceTree = "<group>"; };
 		7EAC92EE1A76ACE900058BA3 /* OnChain.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnChain.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EAC92F21A76ACE900058BA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EAC92F31A76ACE900058BA3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -138,6 +146,7 @@
 		7E09AD8D1A77755300F3538B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				7E30D5821A826F0E006B45E9 /* KeyModel */,
 				7E09ADB51A777A2A00F3538B /* QRCodeParse */,
 				7E09ADB11A77758100F3538B /* Networking */,
 				7E09AD8E1A77755300F3538B /* AFNetworking */,
@@ -158,7 +167,6 @@
 				7E09AD951A77755300F3538B /* AFJSONUtilities.h */,
 				7E09AD961A77755300F3538B /* AFURLConnectionOperation.h */,
 				7E09AD971A77755300F3538B /* AFURLConnectionOperation.m */,
-				7E09AD981A77755300F3538B /* Define.h */,
 			);
 			path = AFNetworking;
 			sourceTree = "<group>";
@@ -205,6 +213,19 @@
 				7EF7C6131A7AB78F00B1EED3 /* BitIDCommands.m */,
 			);
 			path = QRCodeParse;
+			sourceTree = "<group>";
+		};
+		7E30D5821A826F0E006B45E9 /* KeyModel */ = {
+			isa = PBXGroup;
+			children = (
+				7E30D5831A827A22006B45E9 /* MnemonicCode.h */,
+				7E30D5841A827A22006B45E9 /* MnemonicCode.m */,
+				7E0159D81A8660BE00D046B8 /* MultiUtils.h */,
+				7E0159D91A8660BE00D046B8 /* MultiUtils.m */,
+				7E0159DB1A8664B300D046B8 /* ChainCommands.h */,
+				7E0159DC1A8664B300D046B8 /* ChainCommands.m */,
+			);
+			path = KeyModel;
 			sourceTree = "<group>";
 		};
 		7EAC92E51A76ACE900058BA3 = {
@@ -407,8 +428,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E30D5851A827A22006B45E9 /* MnemonicCode.m in Sources */,
 				7E09ADAB1A77755300F3538B /* NSObject+SBJSON.m in Sources */,
 				7E09ADB01A77755300F3538B /* SBJsonWriter.m in Sources */,
+				7E0159DA1A8660BE00D046B8 /* MultiUtils.m in Sources */,
+				7E0159DD1A8664B300D046B8 /* ChainCommands.m in Sources */,
 				7E09ADB81A777A3400F3538B /* QRCodeParse.m in Sources */,
 				7E09AD891A76B83800F3538B /* QRScanViewController.m in Sources */,
 				7EAC92F71A76ACE900058BA3 /* AppDelegate.m in Sources */,

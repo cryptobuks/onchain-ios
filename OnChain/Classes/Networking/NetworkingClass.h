@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+
 @protocol NetworkingClassDelegate <NSObject>
 
 @optional
-- (void) successAuthentification;
+- (void) successSignRequestWithResponse:(NSString *) strResponse;
 
+- (void) successAuthentification;
 - (void) failedConnectToServer:(NSString *) strErrorMessage;
 
 @end
@@ -22,7 +24,8 @@
 @property (nonatomic, weak) id <NetworkingClassDelegate> delegate;
 
 - (void) doBitIDWithSigned:(NSString *) strSigned withPostBack:(NSString *) postBack withAddress:(NSString *)address withData:(NSString *) data;
-
-- (void) authontificateWithKey:(NSString *) strKey;
+- (void) processMPKRequestWithDictionary:(NSMutableDictionary *) dic withPostBack:(NSString *)postBack;
+- (void) processSignRequestWithDictionary:(NSMutableDictionary *) dic withPostBack:(NSString *)postBack;
+- (void) processPubKeyRequestWithDictionary:(NSMutableDictionary *) dic withPostBack:(NSString *)postBack;
 
 @end

@@ -68,7 +68,7 @@
 {
     NSArray * array = [urlQR.absoluteString componentsSeparatedByString:@"?"];
     if (array.count > 1)
-    {
+    { 
         array = [array[1] componentsSeparatedByString:@"&"];
         if (array.count)
         {
